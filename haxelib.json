@@ -1,0 +1,27 @@
+{
+	"name": "tini",
+	"description": "Tolerant INI file parser and printer with support for other haxe structures. Based off of TJSON.",
+	"releasenote": "Initial Release! Support for parsing & printing INI configuration files.",
+	"version": "1.0.0",
+	"contributors": ["T-Bar"],
+	"classPath": "src/",
+	"tags": [
+		"ini",
+		"haxe",
+		"tolerant",
+		"parser",
+		"cross",
+
+		"js",
+		"cpp",
+		"Hashlink",
+		"javascript",
+
+		"utility",
+		"util",
+		"utilities"
+	],
+	"url": "https://github.com/martamius/TJSON",
+	"dependencies": {},
+	"license": "Apache"
+}
