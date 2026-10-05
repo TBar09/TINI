@@ -16,6 +16,7 @@ class BasicTypesTest {
 
 		trace("myFloat: " + Std.string(retVal.myFloat));
 		trace("myInt: " + Std.string(retVal.myInt));
+		trace("myBool: " + Std.string(retVal.myBool));
 	}
 
 	public static inline function print(str:Dynamic) {
