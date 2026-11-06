@@ -7,10 +7,16 @@ TIni was made as a simple parser in order to educate people wanting to learn abo
 
 ## Usage
 
-Install TINI by running the following in the command line:
+Install TINI through Haxelib by running the following in the command line:
 ```bat
 haxelib install tini
 ```
+
+You can also install it through Github:
+```bat
+haxelib git tini https://github.com/TBar09/TINI.git
+```
+
 ---
 
 To use the haxelib in a project:
