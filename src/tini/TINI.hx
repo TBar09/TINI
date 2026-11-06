@@ -96,6 +96,10 @@ class IniParser {
 		this.rules = rules;
 		this.variables = new Map();
 		this.position = 1;
+
+		this.floatRegex = ~/^[+-]?[0-9]*\.[0-9]*$/;
+		this.intRegex = ~/^[+-]?[0-9]+$/;
+		this.hexaRegex = ~/^[+-]?(?:0x)[0-9a-f]+$/i;
 	}
 
 	/**
@@ -232,14 +236,16 @@ class IniParser {
 		return str;
 	}
 
+	private var floatRegex:EReg;
+	private var intRegex:EReg;
+	private var hexaRegex:EReg;
+
 	/**
 	 * Returns true if the string can be a float.
 	 */
-	private var floatRegex:EReg = ~/^-?[0-9]*\.[0-9]+$/;
-	private var intRegex:EReg = ~/^-?[0-9]+$/;
 	inline function canBeFloat(val:String):Bool {
-		return floatRegex.match(val) || (canBeInt(val) && {
-			var intStr:String = intRegex.matched(0);
+		return floatRegex.match(val) || (intRegex.match(val) && {
+			var intStr:String = intRegex.matched(0); // For integer overflow stuff
 			intStr > (intStr.charCodeAt(0) == '-'.code ? "-2147483648" : "2147483647");
 		});
 	}
@@ -248,7 +254,7 @@ class IniParser {
 	 * Returns true if the string can be an integer.
 	 */
 	inline function canBeInt(val:String):Bool {
-		return intRegex.match(val);
+		return (intRegex.match(val) || hexaRegex.match(val));
 	}
 
 	/**

@@ -16,6 +16,7 @@ class BasicTypesTest {
 
 		trace("myFloat: " + Std.string(retVal.myFloat));
 		trace("myInt: " + Std.string(retVal.myInt));
+		trace("myHexa: " + Std.string(retVal.myHexa) + " | Is an int: " + (retVal.myHexa == 0xFF006a33 ? "true" : "false"));
 		trace("myBool: " + Std.string(retVal.myBool));
 	}
 
