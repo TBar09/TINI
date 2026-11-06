@@ -20,8 +20,9 @@ haxelib git tini https://github.com/TBar09/TINI.git
 ---
 
 To use the haxelib in a project:
-- For Haxe projects, use `-lib tini`.
-- For OpenFL/Lime projects, use `<haxelib name="tini"/>`.
+ - For Haxe projects, use `-lib tini`.
+ - For OpenFL/Lime projects, use `<haxelib name="tini"/>`.
+
 ---
 
 Here is basic usage:
@@ -158,8 +159,8 @@ function main() {
 }
 ```
 
-### "__root__" Keyword
-If a group name is called "__root__", then the current group will be dropped and any further assign lines
+### `__root__` Keyword
+If a group name is called `__root__`, then the current group will be dropped and any further assign lines
 will be written to the root structure itself and not inside a group.
 ```ini
 ; My INI file.ini
@@ -186,7 +187,7 @@ myVar>10.2
 import tini.TINI;
 
 function main() {
-	var iniParser:IniParser({
+	var iniParser:IniParser = new IniParser({
 		ASSIGN_KEY: ">",
 		COMMENT_KEY: "//",
 		ARGUMENT_DELIMITER: ",",
