@@ -376,8 +376,8 @@ class IniParser {
 						newStr.addChar(hexValue);
 						#else
 						var utf = #if neko new neko.Utf8() #else new haxe.Utf8() #end;
-                        utf.addChar(hexValue);
-                        newStr.add(utf.toString());
+						utf.addChar(hexValue);
+						newStr.add(utf.toString());
 						utf = null;
 						#end
 
