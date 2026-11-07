@@ -337,12 +337,14 @@ class IniParser {
 						waitQueue = 1;
 						continue;
 
-					case 'u'.code:
+					case 'u'.code | 'x'.code:
 						var hexValue:Int = 0;
 
-						// TODO: Support for "\NNN", "\xNN", and "\u{N...}"
-						for (ui in 0...4) {
-							// The current position of the "u" after the escape character,
+						// TODO: Support for "\NNN" and "\u{N...}"
+						var iter:IntIterator = new IntIterator(0, ((nextCharCode == 'u'.code) ? 4 : 2));
+
+						for (ui in iter) {
+							// The current position of the "u"/"x" after the escape character,
 							// plus the following hex characters.
 							var nextUnicodePos:Int = (i+1) + (ui+1);
 
@@ -353,7 +355,7 @@ class IniParser {
 							}
 
 							// Now if the current code is a valid hexidecimal digit, then we
-							// add it to the final unicode escape.
+							// add it to the final unicode/ASCII escape.
 							var unicodeCharCode:Int = str.charCodeAt((i+1) + (ui+1));
 							hexValue = hexValue << 4;
 
@@ -369,11 +371,23 @@ class IniParser {
 							}
 						}
 
+						// Add the unicode/ASCII to the string
+						#if target.unicode
 						newStr.addChar(hexValue);
+						#else
+						var utf = #if neko new neko.Utf8() #else new haxe.Utf8() #end;
+                        utf.addChar(hexValue);
+                        newStr.add(utf.toString());
+						utf = null;
+						#end
 
-						waitQueue = 5;
+						// If `\u`, wait 5 chars, else it's a `\x`, so wait 3 chars.
+						waitQueue = ((nextCharCode == 'u'.code) ? 5 : 3);
 						continue;
 				}
+
+				error("Invalid escape sequence \"\\" + String.fromCharCode(nextCharCode) + "\"!");
+				continue;
 			}
 
 			newStr.addChar(charCode);
