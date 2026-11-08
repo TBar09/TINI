@@ -1,8 +1,8 @@
 {
 	"name": "tini",
 	"description": "Tolerant INI file parser and printer with support for other haxe structures. Based off of TJSON.",
-	"releasenote": "Initial Release! Support for parsing & printing INI configuration files.",
-	"version": "1.0.0",
+	"releasenote": "Support for any map types, hexadecimals, and JSON5-styled Floats & Ints.",
+	"version": "1.0.1",
 	"contributors": ["T-Bar"],
 	"classPath": "src/",
 	"tags": [
