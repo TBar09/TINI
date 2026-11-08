@@ -12,6 +12,9 @@ echo.
 haxe --library tini --run StringTest.hx
 echo.
 
+haxe --library tini --run MapTest.hx
+echo.
+
 haxe --library tini --run ClassesTest.hx
 echo.
 

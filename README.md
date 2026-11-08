@@ -93,11 +93,10 @@ Ini files can declare arrays and string maps:
 ; My INI file.ini
 
 myArr=[10.2, true, ["Hello", "world", "!!"]]
-myMap=["one" => "Hello", "two" => "World"]
-```
 
-> [!NOTE]
-> Ini-declared maps are limited to string maps for now.
+myStringMap=["one" => "Hello", "two" => "World"]
+myIntMap=[1 => "Hello", 2 => "World", 3 => "!!!"]
+```
 
 ### Anonymous Structures
 Ini files can declare full anonymous structures:
