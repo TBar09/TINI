@@ -17,6 +17,7 @@ class TINI {
 		ARGUMENT_DELIMITER: ",",
 		ROOT_KEYWORD_ALLOWED: true,
 		ANON_STRUCTURES_ALLOWED: true,
+		SUBGROUPS_ALLOWED: true,
 		CLASSES_ALLOWED: true,
 		ENUM_ALLOWED: true,
 		CLASS_KEY: "__ini_cls__",
@@ -71,6 +72,10 @@ typedef IniRules = {
 	@:optional @:default(true)
 	var ANON_STRUCTURES_ALLOWED:Bool;
 
+	/** Whether sub-groups (`[My Group.My Sub Group]`) are allowed. */
+	@:optional @:default(true)
+	var SUBGROUPS_ALLOWED:Bool;
+
 	/** Whether classes are allowed. */
 	@:optional @:default(true)
 	var CLASSES_ALLOWED:Bool;
@@ -104,12 +109,16 @@ class IniParser {
 		this.hexaRegex = ~/^[+-]?(?:0x)[0-9a-f]+$/i;
 	}
 
+	// The key that tells the parser to go to the root structure depth
+	public static inline var rootKeyword:String = "__root__";
+
 	/**
 	 * Parses an ini string text into an anonymous structure.
 	 */
 	public function parse(str:String):Dynamic {
 		var retVal:Dynamic = {};
-		var curGroup:String = null;
+
+		var cachedStruct:Dynamic = null;
 
 		var lines:Array<String> = str.split('\n');
 		lines = lines.slice(position - 1, lines.length);
@@ -126,25 +135,28 @@ class IniParser {
 
 			// The line is a group declaration
 			if(trimmedLine.fastCodeAt(0) == '['.code) {
-				curGroup = getInnerStringText(trimmedLine).trim();
+				var curGroup:String = getInnerStringText(trimmedLine).trim();
 
 				// If the group's name is "__root__", then the current group is dropped and any further
 				// key-value assigns will be added to the root structure.
-				if(rules.ROOT_KEYWORD_ALLOWED && curGroup == "__root__") {
-					curGroup = null;
+				if(rules.ROOT_KEYWORD_ALLOWED && curGroup == rootKeyword) {
+					cachedStruct = null;
 					continue;
 				}
 
 				// If the group is missing from the structure, add it!
-				if(!Reflect.hasField(retVal, curGroup)) {
+				// Only if subgroups aren't allowed, as we handle that differently.
+				if(!rules.SUBGROUPS_ALLOWED && !Reflect.hasField(retVal, curGroup)) {
 					Reflect.setField(retVal, curGroup, {});
 				}
+
+				cachedStruct = (rules.SUBGROUPS_ALLOWED ? followSubgroupPath(retVal, curGroup) : Reflect.field(retVal, curGroup));
 				continue;
 			}
 
 			// The line is a key->value assign
 			if(line.indexOf(rules.ASSIGN_KEY) != -1) {
-				assignValue((curGroup == null ? retVal : Reflect.field(retVal, curGroup)), line, line.indexOf(rules.ASSIGN_KEY));
+				assignValue((cachedStruct == null ? retVal : cachedStruct), line, line.indexOf(rules.ASSIGN_KEY));
 				continue;
 			}
 
@@ -152,6 +164,35 @@ class IniParser {
 		}
 
 		return retVal;
+	}
+
+	/**
+	 * Follows a dot-path of groups and returns the resulting structure.
+	 */
+	function followSubgroupPath(struct:Dynamic, groupName:String) {
+		var splitName:Array<String> = groupName.split('.');
+		var curStruct:Dynamic = {};
+
+		for(i in 0...splitName.length) {
+			// If this is the first member, then we target the main structure, else we target the affected structure
+			var targetStruct:Dynamic = (i == 0 ? struct : curStruct);
+			var name:String = splitName[i];
+
+			if(rules.ROOT_KEYWORD_ALLOWED && name == rootKeyword) {
+				error('Sub groups cannot contain "${rootKeyword}"!');
+				return curStruct;
+			}
+
+			// If the field doesn't exist, then we create it
+			if(Reflect.field(targetStruct, name) == null) {
+				Reflect.setField(targetStruct, name, {});
+			}
+
+			// Now we assign the current structure for use in the next loop
+			curStruct = Reflect.field(targetStruct, name);
+		}
+
+		return curStruct;
 	}
 
 	/**
