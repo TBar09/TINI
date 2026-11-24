@@ -24,7 +24,7 @@ class EnumsTest {
 			case CUSTOM(name, mph, isCool):
 				'This is a ${name}, it can go ${Std.string(mph)} miles per hour${(isCool ? ' and is cool' : '')}';
 			case HYBRID(vehicle1, vehicle2):
-				'This is a hybrid | "${detectCarType(vehicle1)}" and "${detectCarType(vehicle1)}"';
+				'This is a hybrid | "${detectCarType(vehicle1)}" and "${detectCarType(vehicle2)}"';
 		}
 	}
 

@@ -6,8 +6,8 @@ class StringTest {
 	static var INI_FILEPATH:String = "./assets/String Test.ini";
 
 	public static function main() {
-		print("  Basic Types Test  ");
-		print("--------------------");
+		print("  String Test  ");
+		print("---------------");
 
 		var obj:Dynamic = {
 			myTabStr: "I	am	a	tab.",
